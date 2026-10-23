@@ -1,0 +1,32 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Electronic Gadget Shop</title> 
+    <style> 
+        body { font-family: Arial; margin: 0; padding: 0; } 
+        .banner { background: yellow; padding: 20px; text-align: center; font-size: 
+24px; } 
+        .categories { display: flex; flex-wrap: wrap; justify-content: center; margin: 
+20px; } 
+        .category { border: 1px solid #ddd; margin: 10px; padding: 10px; width: 
+200px; text-align: center; border-radius: 10px; box-shadow: 2px 2px 6px #aaa; } 
+        .category img { width: 100%; height: 150px; object-fit: cover; } 
+        .category a { text-decoration: none; color: black; font-weight: bold; display: 
+block; margin-top: 10px; } 
+    </style> 
+</head> 
+<body> 
+    <div class="banner">Welcome to Electronic Gadget Shop</div> 
+    <h2 style="text-align:center;">Shop by Category</h2> 
+    <div class="categories"> 
+        {% for cat in categories %} 
+        <div class="category"> 
+            {% if cat.image %} 
+            <img src="{{ cat.image.url }}" alt="{{ cat.name }}"> 
+            {% endif %} 
+            <a href="{% url 'category_products' cat.id %}">{{ cat.name }}</a> 
+        </div> 
+        {% endfor %} 
+    </div> 
+</body> 
+</html> 
