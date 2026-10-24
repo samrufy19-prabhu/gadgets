@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-q)&kj@7vvs1bi_=t0f20r(6waelh%^!mp-b&*=)smprmigwr0j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+   
 ]
 
 ROOT_URLCONF = 'gadgetshop.urls'
@@ -73,23 +76,24 @@ WSGI_APPLICATION = 'gadgetshop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-DATABASES = { 
-    'default': { 
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'gadgetdb', 
-        'USER': 'root',          # your MySQL username 
-        'PASSWORD': 'rubyprabhu18',   # your MySQL password 
-        'HOST': 'localhost', 
-        'PORT': '3306', 
-    } 
-}
+if os.environ.get('DB_HOST') or os.environ.get('MYSQL_DATABASE'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('MYSQL_DATABASE', 'gadgetdb'),
+            'USER': os.environ.get('DB_USER', os.environ.get('MYSQL_USER', 'root')),
+            'PASSWORD': os.environ.get('DB_PASSWORD', os.environ.get('MYSQL_PASSWORD', '')),
+            'HOST': os.environ.get('DB_HOST', os.environ.get('MYSQL_HOST', 'localhost')),
+            'PORT': os.environ.get('DB_PORT', os.environ.get('MYSQL_PORT', '3306')),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -126,14 +130,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
